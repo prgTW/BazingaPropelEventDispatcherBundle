@@ -86,4 +86,45 @@ class BazingaPropelEventDispatcherBundleTest extends WebTestCase
         $this->assertEquals('pre_insert', $subject->source);
         $this->assertSame($object, $subject);
     }
+
+	public function testEventDispatcherUnitialization()
+	{
+		$object   = new MyObject();
+		$listener = $this->getContainer()->get('listener.my_event_listener');
+
+		$this->assertCount(0, $listener->getEvents());
+
+		self::ensureKernelShutdown();
+
+		$object->preSave();
+		$this->assertCount(0, $listener->getEvents());
+	}
+
+	public function testEventDispatcherUnitializationWithEarlyBoot()
+	{
+		$listener = $this->getContainer()->get('listener.my_event_listener_4');
+		$object   = new MyObject3();
+
+		$this->assertCount(0, $listener->getEvents());
+
+		self::ensureKernelShutdown();
+
+		$object->preSave();
+		$this->assertCount(0, $listener->getEvents());
+	}
+
+	public function testEventDispatcherUnitializationWithSubscriber()
+	{
+		$object     = new MyObject3();
+		$subscriber = $this->getContainer()->get('subscriber.my_subscriber_1');
+
+		$this->assertCount(0, $subscriber->getEvents());
+
+		self::ensureKernelShutdown();
+
+		$object->preInsert();
+		$object->preSave();
+		$this->assertCount(0, $subscriber->getEvents());
+	}
+
 }
