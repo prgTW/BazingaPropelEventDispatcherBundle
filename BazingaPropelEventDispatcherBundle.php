@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class BazingaPropelEventDispatcherBundle extends Bundle
 {
     /**
-     * {@inheritdoc}
+     *{@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {
@@ -28,4 +28,12 @@ class BazingaPropelEventDispatcherBundle extends Bundle
     {
         $this->container->get('bazinga.propel_event_dispatcher.injector')->initializeModels();
     }
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function shutdown()
+	{
+		$this->container->get('bazinga.propel_event_dispatcher.injector')->uninitializeModels();
+	}
 }
